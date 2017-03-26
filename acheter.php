@@ -2,7 +2,7 @@
 include "connectdb.php";
 include "basicconst.php";
 if (!isset($_SESSION['uid']) /*or !$_SESSION['admin']*/) { header('Location: index.php'); exit(); }
- 
+
 if ($_SESSION['anciennete']==1 and !$_SESSION['assoc'] and !isset($_GET['race']))
 	reload('?race=1');
 
@@ -12,13 +12,11 @@ $_SESSION['pass']=mysql_result(mysql_query('SELECT pass FROM login WHERE id = '.
 
 if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 {
-	// settings de variables importantes
 	$query = "SELECT vente,proprietaire,nom,reserve,compte,race,cid,sexe FROM chevaux LEFT JOIN login ON proprietaire = id WHERE cid = ".$_GET['cid'];
 	$result = mysql_query($query);
 	
 	$row = mysql_fetch_array($result);
 	
-	// calcul du prix et de la remise
 	$prix = $row[0];
 	$check_remise=mysql_query('SELECT remise FROM sponsors WHERE aid = '.$row[1].' AND uid = '.$_SESSION['uid']);
 	if ($rem=mysql_fetch_row($check_remise))
@@ -28,7 +26,6 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 	
 	$prix = ceil((1-$remise/100)*$row[0]);
 		
-	// gestion et categorisation des erreurs
 	if ($prix<=0)
 	{
 		if (!isset($_GET['rapide']))
@@ -63,8 +60,6 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 	}
 	else 
 	{
-		// si aucune erreur n'a eu lieu
-		
 		$deja_vendu=mysql_result(mysql_query('SELECT COUNT(1) FROM hvente WHERE cid = '.$row['cid'].' AND vuid = '.$_SESSION['uid'].' LIMIT 1'),0);
 		
 		$query = 'UPDATE login SET argent = argent - '.$prix.', '.($deja_vendu?'ventes=ventes-1':'achats=achats+1').' WHERE id = '.$_SESSION['uid'];
@@ -83,8 +78,7 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 			$query = 'UPDATE login SET argent = argent + '.$prix.', '.($deja_vendu?'ventes=ventes+1':'achats=achats-1').' WHERE id = '.$_SESSION['uid'];
 			exit();
 		}
-		
-		// creation et stockage d'un message concernant la vente		
+			
 		$message = linkanimal($row).' a été vendu à <a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> au prix de '.$prix.'<img src=monnaie.png>';
 		if ($remise)
 			$message.=' (Au lieu de '.$row[0].'<img src=monnaie.png>, remise de '.$remise.'% pour son '.$SPONSORING.')';
