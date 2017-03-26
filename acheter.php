@@ -3,7 +3,6 @@ include "connectdb.php";
 include "basicconst.php";
 if (!isset($_SESSION['uid']) /*or !$_SESSION['admin']*/) { header('Location: index.php'); exit(); }
 
- 
 if ($_SESSION['anciennete']==1 and !$_SESSION['assoc'] and !isset($_GET['race']))
 	reload('?race=1');
 
@@ -11,17 +10,13 @@ if (isset($_SESSION['vraiuid']) and !$_SESSION['assoc']) { header('Location: ind
 	
 $_SESSION['pass']=mysql_result(mysql_query('SELECT pass FROM login WHERE id = '.$_SESSION['uid']),0);
 
-// 
 if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 {
-	// settings de variables importantes
 	$query = "SELECT vente,proprietaire,nom,reserve,compte,race,cid,sexe FROM chevaux LEFT JOIN login ON proprietaire = id WHERE cid = ".$_GET['cid'];
 	$result = mysql_query($query);
-
-	// retourne la premiere ligne de $result
+	
 	$row = mysql_fetch_array($result);
 	
-	// calcul du prix et de la remise
 	$prix = $row[0];
 	$check_remise=mysql_query('SELECT remise FROM sponsors WHERE aid = '.$row[1].' AND uid = '.$_SESSION['uid']);
 	if ($rem=mysql_fetch_row($check_remise))
@@ -30,12 +25,10 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 		$remise = 0;
 	
 	$prix = ceil((1-$remise/100)*$row[0]);
-		
-	// gestion et categorisation des erreurs
 
     // ############### DEBUT MODIF 1 ###################################################################################
     $query = mysql_query('SELECT niveau FROM bloquage WHERE uid1 = '.$_SESSION['uid'].' AND uid2 = '.$_GET['uid']);
-    $isBlackListed = 0;
+    $isBlackListed = false;
     if (mysql_num_rows($query))
         $isBlackListed = mysql_result($query, 0) == 2;
 
@@ -43,7 +36,7 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
     if ($isBlackListed)
     {
         if (!isset($_GET['rapide']))
-	        header('Location: acheter.php?erreur=6');
+            header('Location: acheter.php?erreur=6');
         exit();
     }
     // ############### FIN  MODIF 1 ####################################################################################
@@ -81,8 +74,6 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 	}
 	else 
 	{
-		// si aucune erreur n'a eu lieu
-		
 		$deja_vendu=mysql_result(mysql_query('SELECT COUNT(1) FROM hvente WHERE cid = '.$row['cid'].' AND vuid = '.$_SESSION['uid'].' LIMIT 1'),0);
 		
 		$query = 'UPDATE login SET argent = argent - '.$prix.', '.($deja_vendu?'ventes=ventes-1':'achats=achats+1').' WHERE id = '.$_SESSION['uid'];
@@ -101,21 +92,18 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 			$query = 'UPDATE login SET argent = argent + '.$prix.', '.($deja_vendu?'ventes=ventes+1':'achats=achats-1').' WHERE id = '.$_SESSION['uid'];
 			exit();
 		}
-		
-		// creation et stockage d'un message concernant la vente		
-		$message = linkanimal($row).' a ï¿½tï¿½ vendu ï¿½ <a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> au prix de '.$prix.'<img src=monnaie.png>';
+			
+		$message = linkanimal($row).' a été vendu à <a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> au prix de '.$prix.'<img src=monnaie.png>';
 		if ($remise)
 			$message.=' (Au lieu de '.$row[0].'<img src=monnaie.png>, remise de '.$remise.'% pour son '.$SPONSORING.')';
 		mysql_query('INSERT DELAYED INTO infos(uid,message,type) VALUES('.$row[1].',"'.$message.'",1)');
-		// ?
 		mysql_query('UPDATE materiel SET cid = 0, equipable = 1 WHERE categorie = 2 AND cid = '.$_GET['cid']);	
 		
 		if (isset($_SESSION['assoc']) and $_SESSION['assoc'])
 		{
-			$message=$_SESSION['fichemoi'].' a achetï¿½ '.linkanimal($row).' ï¿½ <a class=atype5 href=fiche.php?uid='.$row[1].'>'.$row[4].'</a> pour '.$row[0].'<img src=monnaie.png>.';
+			$message=$_SESSION['fichemoi'].' a acheté '.linkanimal($row).' à <a class=atype5 href=fiche.php?uid='.$row[1].'>'.$row[4].'</a> pour '.$row[0].'<img src=monnaie.png>.';
 			mysql_query('UPDATE login SET historique=CONCAT(historique,"['.date('H\hi').']'.$message.'<br>") WHERE id = '.$_SESSION['uid']);
 		}
-		// Ca devient dur sans info...
 		mysql_query('INSERT INTO hvente(cid,cnom,vuid,vunom,auid,aunom,prix) VALUES ('.$_GET['cid'].',"'.$row[2].'",'.$row[1].',"'.$row[4].'",'.$_SESSION['uid'].',"'.$_SESSION['compte'].'",'.$row[0].')');
 		$_SESSION['doitrecache']=max($_SESSION['doitrecache'],3);;
 		if (!isset($_GET['rapide']))
@@ -126,7 +114,6 @@ if (isset($_GET['cid']) and ($_SESSION['anciennete']>=3 or $_SESSION['assoc']))
 	}
 
 }
-// moultes include
 include "header.php";
 include "debutpage.php";
 include "debutmenu.php";
@@ -141,7 +128,6 @@ include "pub.php";
 echo finAction();
 include "finaction.php";
 ?>
-<!-- pas compris le but de ce script en javascript -->
 <script type="text/javascript">
 function description(id)
 {
@@ -149,49 +135,46 @@ function description(id)
 	GetId('bubulle').innerHTML = '<div style="width:600">'+GetId(id).innerHTML+'</div>'; 
 }
 </script>
-<!-- acces a l'hotel des ventes -->
 <?php 
 if ($_SESSION['anciennete']>1 or $_SESSION['assoc']):
 echo debutFenetre('Hotel des ventes');?>
-L'hotel des ventes prï¿½sente les ventes directes de <?=$ANIMAUX?>. 
+L'hotel des ventes présente les ventes directes de <?=$ANIMAUX?>. 
 <?php 
 if ($_SESSION['anciennete']>=3 or $_SESSION['assoc'])
-	echo '<a class=atype5 href = "listevente2.php">Accï¿½der ï¿½ l\'hotel des ventes </a>';
+	echo '<a class=atype5 href = "listevente2.php">Accéder à l\'hotel des ventes </a>';
 else 
-	echo '<br><br><span class=important>Disponible ï¿½ partir de 3 jours d\'anciennetï¿½.</span>';
+	echo '<br><br><span class=important>Disponible à partir de 3 jours d\'ancienneté.</span>';
 
 echo finFenetre();
-echo debutFenetre('La salle des enchï¿½res');?>
-La salle des enchï¿½res regroupe les enchï¿½res de <?=$ANIMAUX?>.
-<!-- definit si l'utilisateur a acces a la salle des encheres --> 
+echo debutFenetre('La salle des enchères');?>
+La salle des enchères regroupe les enchères de <?=$ANIMAUX?>. 
 <?php 
 if ($_SESSION['anciennete']>=3 or $_SESSION['assoc'])
-	echo '<a class=atype5 href = "encheres.php">Accï¿½der ï¿½ la salle des enchï¿½res </a>';
+	echo '<a class=atype5 href = "encheres.php">Accéder à la salle des enchères </a>';
 else 
-	echo '<br><br><span class=important>Disponible ï¿½ partir de 3 jours d\'anciennetï¿½.</span>';
+	echo '<br><br><span class=important>Disponible à partir de 3 jours d\'ancienneté.</span>';
 echo finFenetre();
 
 if ($_SESSION['assoc']) {
 echo debutFenetre('Seconde vie');
-echo 'Cette partie '.mot('venteanimaux','ofthe').' permet '.mot('association','to',0,1).' de racheter '.mot('animal','a',0,1).' cï¿½dï¿½s par des joueurs. <a class=atype5 href=secondevie.php>Accï¿½der ï¿½ la filiale seconde vie '.mot('venteanimaux','ofthe').'</a>';
+echo 'Cette partie '.mot('venteanimaux','ofthe').' permet '.mot('association','to',0,1).' de racheter '.mot('animal','a',0,1).' cédés par des joueurs. <a class=atype5 href=secondevie.php>Accéder à la filiale seconde vie '.mot('venteanimaux','ofthe').'</a>';
 echo finFenetre();
 }
 endif;
 echo debutFenetre(ucfirst($LABARAQUE));?>
 <span class=combleu>Choisissez un <?php echo $PETIT; ?> vendu <?php echo $PARLABARAQUE; ?></span><br>
-<?php
-// choix par race et sexe 
+<?php 
 if (isset($_POST['sexe']) and isset($_POST['race']) and $_POST['race']!='' and $_POST['sexe']!='') 
 {
-	// recuperage des ventes disponibles par race et sexe
-	echo '<a class="atype2" href="acheter.php">Rï¿½initialiser le choix</a>';
+	
+	echo '<a class="atype2" href="acheter.php">Réinitialiser le choix</a>';
 	echo '<br>';
 	$inforace = mysql_fetch_assoc(mysql_query('SELECT nom, envente FROM race WHERE raceid = '.$_POST['race']));
 	
 	if ($SITE_ID==2 and !$inforace['envente'])
 		echo 'Sexe : Couple<br>'; 
 	else
-		echo 'Sexe : '.(($_POST['sexe']==1) ? 'Mï¿½le' : 'Femelle').'<br>';
+		echo 'Sexe : '.(($_POST['sexe']==1) ? 'Mâle' : 'Femelle').'<br>';
 	
 	echo 'Race : <a class="atype6" href="inforace.php?race='.$_POST['race'].'">'.($inforace['nom']).'</a>';	
 
@@ -200,8 +183,7 @@ if (isset($_POST['sexe']) and isset($_POST['race']) and $_POST['race']!='' and $
 	
     $query = "SELECT nom,robeid FROM robe WHERE disponible = 1 AND raceid = ".$_POST['race'];
 	$result = mysql_query($query);
-	
-	// affichage du tableau des resultats
+
 	$i=0;
 	while($row = mysql_fetch_row($result))
 	{
@@ -220,7 +202,6 @@ if (isset($_POST['sexe']) and isset($_POST['race']) and $_POST['race']!='' and $
 	}
 	echo '</table>';
 }
-// choix uniquement par race 
 else if (isset($_GET['race']))
 {
 	$inforace = mysql_fetch_assoc(mysql_query('SELECT nom, envente FROM race WHERE raceid = '.$_GET['race']));
@@ -234,19 +215,17 @@ else if (isset($_GET['race']))
 		if ($SITE_ID==2 and !$inforace['envente'])
 			echo '<td width = 100px><input type="radio" name="sexe" value="1" checked><a class="atypespe" href="#"  onclick="document.choix.sexe[0].checked=\'checked\'; return false;">Couple</a></td>';
 		else
-		echo '<td width = 100px><input type="radio" name="sexe" value="1"><a class="atypespe" href="#"  onclick="document.choix.sexe[0].checked=\'checked\'; return false;">Mï¿½le</a></td> 
+		echo '<td width = 100px><input type="radio" name="sexe" value="1"><a class="atypespe" href="#"  onclick="document.choix.sexe[0].checked=\'checked\'; return false;">Mâle</a></td> 
 		<td width = 100px><input type="radio" name="sexe" value="2"><a class="atypespe" href="#"  onclick="document.choix.sexe[1].checked=\'checked\'; return false;">Femelle</a></td></tr>';
   		echo '</table>
   		<input type="hidden" name="race" value="'.$_GET['race'].'">
   		<input type="submit" value="Choisir la robe">
   		</form>';
 }
-// choix vide
 else 
 {
-	echo '<span class=important>Les robes prï¿½sentï¿½es sur cette page sont des exemples de robe disponible pour chaque race, d\'autres robes sont souvent disponibles.</span><br><br>Choisissez votre race :';
+	echo '<span class=important>Les robes présentées sur cette page sont des exemples de robe disponible pour chaque race, d\'autres robes sont souvent disponibles.</span><br><br>Choisissez votre race :';
 	
-	// creation d'une fonction qui affiche un tableau des ventes (qui specifie si l'utilisateur a les moyens d'acheter telle ou telle animal)
 	function dispListRace($result)
 	{
 		echo '<table cellspacing=25><tr>';
@@ -280,10 +259,10 @@ else
 		
 		echo '</tr></table>';
 	}
-	// achat perso	
+		
     if (!isset($_SESSION['assoc']) or !$_SESSION['assoc'])
     {
-    	echo '<br><span class=combleu>Races Spï¿½ciales</span>';
+    	echo '<br><span class=combleu>Races Spéciales</span>';
     	$query = "SELECT nom,raceid,envente,(SELECT robeid FROM robe WHERE disponible AND robe.raceid = race.raceid LIMIT 1) FROM race WHERE recherche = recherchetotal AND special = 0 AND envente = 0 ORDER BY raceid";
     	dispListRace(mysql_query($query));
     	echo '<span class=combleu>Races Normales</span>';
@@ -291,7 +270,6 @@ else
     	dispListRace(mysql_query($query));
     	
     }
-	// achat d'une race specifique en lien avec l'assoc
     else
     {
     	$query = "SELECT nom,raceid,envente,(SELECT robeid FROM robe WHERE disponible AND robe.raceid = race.raceid LIMIT 1) FROM race WHERE recherche = recherchetotal AND special = 0 AND raceid = ".$_SESSION['raceassoc'].' ORDER BY envente DESC'; 
@@ -305,26 +283,25 @@ else
 	include "resumeraces.php";
 }
 
-// messages d'erreur ou de reussite de l'achat
 echo finFenetre();
 if (isset($_GET['erreur']))
 {
 	if ($_GET['erreur']==0)
-		echo '<script language="javascript">alert("Vous avez bien achetï¿½ ce '.mot('animal').'.")</script>';
+		echo '<script language="javascript">alert("Vous avez bien acheté ce '.mot('animal').'.")</script>';
 	else if ($_GET['erreur']==1)
-		echo '<script language="javascript">alert("Ce '.mot('animal').' n\'est pas ï¿½ vendre.")</script>';
+		echo '<script language="javascript">alert("Ce '.mot('animal').' n\'est pas à vendre.")</script>';
 	else if ($_GET['erreur']==2)
-		echo '<script language="javascript">alert("Vous ï¿½tes dï¿½jï¿½ le propriï¿½taire de ce '.mot('animal').'.")</script>';
+		echo '<script language="javascript">alert("Vous êtes déjà le propriétaire de ce '.mot('animal').'.")</script>';
 	else if ($_GET['erreur']==3)
 		echo '<script language="javascript">alert("Vous n\'avez pas assez d\'argent.")</script>';
 	else if ($_GET['erreur']==4)
-		echo '<script language="javascript">alert("Cette vente ne vous est pas rï¿½servï¿½e.")</script>';
+		echo '<script language="javascript">alert("Cette vente ne vous est pas réservée.")</script>';
 	else if ($_GET['erreur']==5)
-		echo '<script language="javascript">alert("'.$LASSOCIATION.' ne gï¿½re pas ces '.$ANIMAUX.'.")</script>';
-	// #################### DEBUT MODIF 2 ################################################################################
+		echo '<script language="javascript">alert("'.$LASSOCIATION.' ne gère pas ces '.$ANIMAUX.'.")</script>';
+    // #################### DEBUT MODIF 2 ##############################################################################
     else if ($_GET['erreur']==6)
-	    echo '<script language="javascript">alert("Cette vente vous est interdite")</script>';
-    // #################### FIN MODIF 2 ##################################################################################
+        echo '<script language="javascript">alert("Cette vente vous est interdite")</script>';
+    // #################### FIN MODIF 2 ################################################################################
 }
 include "finpage.php";
 ?>
