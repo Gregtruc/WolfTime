@@ -93,7 +93,7 @@ if (isset($_GET['arrete']))
 {
 	mysql_query('DELETE FROM sponsors WHERE '.getday().'-depuis>=15 AND aid = '.$_GET['arrete'].' AND uid = '.$_SESSION['uid']);
 	if (mysql_affected_rows())
-		mysql_query('INSERT INTO infos(uid,message,type) VALUES('.$_GET['arrete'].',"<a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> a mis fin à son '.$SPONSORING.' '.$DELASSOCIATION.'",9)');
+		mysql_query('INSERT INTO infos(uid,message,type) VALUES('.$_GET['arrete'].',"<a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> a mis fin ï¿½ son '.$SPONSORING.' '.$DELASSOCIATION.'",9)');
 	header('Location:reglages.php?reglage=2');
 	exit();
 }
@@ -102,13 +102,13 @@ if (isset($_GET['offir']) and $_GET['uid']!=$_SESSION['uid'] and isset($_SESSION
 	if (mysql_num_rows($check_moi)) // Si je participe
 	{
 		$evt_moi=mysql_fetch_assoc($check_moi);
-		if ($evt_moi['points']>$evt_moi['pointsofferts']) // Si j'ai encore des points à offrir
+		if ($evt_moi['points']>$evt_moi['pointsofferts']) // Si j'ai encore des points ï¿½ offrir
 		{
 			$check_autre=mysql_query('SELECT IF(DATE_ADD(dernierrecu,INTERVAL '.$_SESSION['evenement']['frequence'].' MINUTE)<NOW(),1,0) AS dispo FROM evenement_'.$_SESSION['evenement']['nom'].' WHERE uid = '.$_GET['uid']);
 			if (mysql_num_rows($check_autre)) // Si l'autre participe
 			{
 				$autre=mysql_fetch_assoc($check_autre);
-				if ($autre['dispo']) // S'il n'a pas reçu de point depuis le temps autorisé
+				if ($autre['dispo']) // S'il n'a pas reï¿½u de point depuis le temps autorisï¿½
 				{
 					mysql_query('UPDATE evenement_'.$_SESSION['evenement']['nom'].' SET pointsofferts = pointsofferts + 1 WHERE uid = '.$_SESSION['uid'].' AND pointsofferts < points');
 					if (mysql_affected_rows())
@@ -156,7 +156,7 @@ if (isset($_GET['action']) and isset($_SESSION['uid']))
 		$result = mysql_query($query);
 		$query = 'INSERT INTO amis(uid1,uid2,nom2) VALUES ("'.$_SESSION['uid'].'","'.$_GET['uid'].'","'.str_replace('"','\"',$nom).'")';
 		$result = mysql_query($query);
-		//mysql_query('INSERT INTO infos(uid,message,type) VALUES('.$_GET['uid'].',"<a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> vous a ajouté comme ami.",3)');
+		//mysql_query('INSERT INTO infos(uid,message,type) VALUES('.$_GET['uid'].',"<a class=atype5 href=fiche.php?uid='.$_SESSION['uid'].'>'.$_SESSION['compte'].'</a> vous a ajoutï¿½ comme ami.",3)');
 		break;
 	case 'autorise':
 		mysql_query('INSERT INTO autorise(uid1,uid2,nom2) VALUES ("'.$_SESSION['uid'].'","'.$_GET['uid'].'","'.str_replace('"','\"',$nom).'")');
@@ -237,7 +237,7 @@ if (possedeDroit(DROIT_VUE_MULTI_COMPTES) and !$joueur[19])
 	$list_multis=mysql_query('SELECT id,compte FROM login WHERE id!='.$_GET['uid'].' AND ipnum = '.ip2long($joueur[28]));
 	if (mysql_num_rows($list_multis))
 	{
-		echo '<u><font color=orangered>Même connexion</font></u><br>';
+		echo '<u><font color=orangered>Mï¿½me connexion</font></u><br>';
 		$uids=$_GET['uid'];
 		while ($multi=mysql_fetch_array($list_multis))
 		{
@@ -261,13 +261,13 @@ if (possedeDroit(DROIT_VUE_MULTI_COMPTES) and !$joueur[19])
 		echo '<a class=atype2 href=pmessage.php?uid='.$uids.'&multi>Avertir</a> - <a class=atype2 href=multiautorise.php?uid='.$_GET['uid'].'>Autoriser</a><br><br>';
 	}
 }
-echo '<u>En résumé :</u><br>';
+echo '<u>En rï¿½sumï¿½ :</u><br>';
 echo 'niveau '.$joueur['monniveau'].'<br>';
 echo mot('galop').' '.vraiGalop($joueur['galop']).'<br>';
 echo '<a class=atype7 href=elevage.php?uid='.$_GET['uid'].'>'.$joueur[16].' '.mot('animal','',0,$joueur[16]>1?1:0).'</a> <br>';
 echo formatNombre($joueur[15]).'<img src="monnaie.png"><br>';
 //echo 'Chevaux : '.'<br>';
-echo '<a class=atype5 href=statsavances.php?uid='.$_GET['uid'].'>Stats avancées</a><br>';
+echo '<a class=atype5 href=statsavances.php?uid='.$_GET['uid'].'>Stats avancï¿½es</a><br>';
 
 if (possedeDroit(DROIT_SUPER_ADMIN))
 {
@@ -279,8 +279,8 @@ if (possedeDroit(DROIT_SUPER_ADMIN))
 echo '<br>';
 /*
 $reputation_niveau=array(-40,-30,-20,-10,-1,0,10,20,30,40,50,75,100,250,200,250,300,350,400,450,500,10000);
-$reputation_titre=array('Bandit de petit chemin','Mal-aimé','Désagréable','Mal poli','Peu sympa','Neutre','Sympa','Gentil','Gentleman','Serviable','Dévoué','Fidèle','Juste',
-		'Populaire','Célèbre','Envié','Adoré','Chouchou','Idole','Vénéré','Adulé','Superstar');
+$reputation_titre=array('Bandit de petit chemin','Mal-aimï¿½','Dï¿½sagrï¿½able','Mal poli','Peu sympa','Neutre','Sympa','Gentil','Gentleman','Serviable','Dï¿½vouï¿½','Fidï¿½le','Juste',
+		'Populaire','Cï¿½lï¿½bre','Enviï¿½','Adorï¿½','Chouchou','Idole','Vï¿½nï¿½rï¿½','Adulï¿½','Superstar');
 
 for( $i=0;isset($reputation_niveau[$i]);$i++)
 	if ($joueur[13]<=$reputation_niveau[$i]) break;
@@ -298,7 +298,7 @@ for( $i=0;isset($reputation_niveau[$i]);$i++)
 		$list_reputations.='</b>';
 	$list_reputations.='</font><br>';
 }*/
-//echo '<u>La réputation de <nobr>'.$joueur[0].' :</nobr></u> <img src=icones/info.png onmouseover="montre(\''.$list_reputations.'\')" onmouseout="cache();"><br>';
+//echo '<u>La rï¿½putation de <nobr>'.$joueur[0].' :</nobr></u> <img src=icones/info.png onmouseover="montre(\''.$list_reputations.'\')" onmouseout="cache();"><br>';
 //echo ($joueur[13]>0?'+':'').$joueur[13].'<br>';
 /*echo '<font face="Comic Sans MS" color="'.($joueur[13]>=0?'#0000DD':'orangered').'">';
 
@@ -310,15 +310,15 @@ if (isset($_SESSION['uid']))
 	if ($_SESSION['uid']==$_GET['uid'] or ($joueur['ip']==$_SERVER['REMOTE_ADDR'] and !mysql_num_rows(mysql_query('SELECT 1 FROM multicomptes WHERE uid = '.$_SESSION['uid'].' AND INSTR(autres,"'.$_GET['uid'].'") LIMIT 1'))) or $bloquage)
 	{}
 	else if (mysql_result(mysql_query('SELECT COUNT(1) FROM reputation WHERE uid = '.$_SESSION['uid'].' AND date > DATE_SUB(NOW(),INTERVAL 1 DAY)'),0)>=$_SESSION['monniveau'])
-		echo '<br>Vous ne pouvez plus féliciter ni blâmer personne pour le moment.<br>';
+		echo '<br>Vous ne pouvez plus fï¿½liciter ni blï¿½mer personne pour le moment.<br>';
 	else if (mysql_result(mysql_query('SELECT COUNT(1) FROM reputation WHERE uid = '.$_SESSION['uid'].' AND did = '.$_GET['uid'].' AND date > DATE_SUB(NOW(),INTERVAL 1 DAY)'),0)>=2)
-		echo '<br>Vous ne pouvez plus féliciter ni blâmer '.$joueur[0].' pour le moment.<br>';
+		echo '<br>Vous ne pouvez plus fï¿½liciter ni blï¿½mer '.$joueur[0].' pour le moment.<br>';
 	else
 	{
 		echo '<br>';
 		
-		echo '<a class="atype5" href="fiche.php?uid='.$_GET['uid'].'&action=feliciter">Féliciter '.$joueur[0].'</a><br>';
-		echo '<a class="atype5" href="fiche.php?uid='.$_GET['uid'].'&action=blamer">Blâmer '.$joueur[0].'</a><br>';
+		echo '<a class="atype5" href="fiche.php?uid='.$_GET['uid'].'&action=feliciter">Fï¿½liciter '.$joueur[0].'</a><br>';
+		echo '<a class="atype5" href="fiche.php?uid='.$_GET['uid'].'&action=blamer">Blï¿½mer '.$joueur[0].'</a><br>';
 	}
 }*/
 	
@@ -332,13 +332,13 @@ if (isset($_SESSION['uid']) and $_GET['uid']!=$_SESSION['uid']and isset($_SESSIO
 	if (mysql_num_rows($check_moi)) // Si je participe
 	{
 		$evt_moi=mysql_fetch_assoc($check_moi);
-		if ($evt_moi['points']>$evt_moi['pointsofferts']) // Si j'ai encore des points à offrir
+		if ($evt_moi['points']>$evt_moi['pointsofferts']) // Si j'ai encore des points ï¿½ offrir
 		{
 			$check_autre=mysql_query('SELECT IF(DATE_ADD(dernierrecu,INTERVAL '.$_SESSION['evenement']['frequence'].' MINUTE)<NOW(),1,0) AS dispo FROM evenement_'.$_SESSION['evenement']['nom'].' WHERE uid = '.$_GET['uid']);
 			if (mysql_num_rows($check_autre)) // Si l'autre participe
 			{
 				$autre=mysql_fetch_assoc($check_autre);
-				if ($autre['dispo']) // S'il n'a pas reçu de point depuis le temps autorisé
+				if ($autre['dispo']) // S'il n'a pas reï¿½u de point depuis le temps autorisï¿½
 					echo '<a class=atype5 href=fiche.php?uid='.$_GET['uid'].'&offir=1>Offrir 1 '.$_SESSION['evenement']['nomobjet'].'</a>';
 				else
 					echo '<span class=action_inactive>Offrir 1 '.$_SESSION['evenement']['nomobjet'].' (Attente)</span>';
@@ -439,7 +439,7 @@ if ($joueur[27])
 - <a class=atype5 href="mdpchange.php?uid=<?=$_GET['uid']?>">Changer le MDP</a>
 <? endif; ?>
 <?php if (possedeDroit(DROIT_PANNEAU_ADMIN)):?>
-- <a class="atype5" href="passutilises.php?uid=<?=$_GET['uid']?>">Objets pass achetés</a>
+- <a class="atype5" href="passutilises.php?uid=<?=$_GET['uid']?>">Objets pass achetï¿½s</a>
 <?php endif;?>
 <br>
 <?endif;
@@ -451,13 +451,13 @@ echo '</center>';
 <?php 
 $nomMetiers=$LISTE_METIERS;
 $is_ami=0;
-$mois= array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
+$mois= array('janvier', 'fï¿½vrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aoï¿½t', 'septembre', 'octobre', 'novembre', 'dï¿½cembre');
 
 echo '<div style="float:right; text-align:right;">';
 if (isset($_SESSION['uid']))
 {
 	if ($SITE_ID==2 and !isset($_SESSION['vraiuid']) and ($_GET['uid']!=$_SESSION['uid']) and accesAutorise('eventrose') and mysql_result(mysql_query('SELECT roserestant FROM chasse_stvalentin_2013 WHERE uid = '.$_SESSION['uid']),0))
-		echo '<a onclick="return confirm(\'Offrir une rose à ce joueur?\')" onmouseover="montre(\'Offrir une rose à ce joueur\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=rose"><img src=evenement/rose.png width=40 border=0></a>';
+		echo '<a onclick="return confirm(\'Offrir une rose ï¿½ ce joueur?\')" onmouseover="montre(\'Offrir une rose ï¿½ ce joueur\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=rose"><img src=evenement/rose.png width=40 border=0></a>';
 	
 	$is_ami=0;
 	$amitie=mysql_query('SELECT statut FROM amis WHERE uid1 = '.$_GET['uid'].' and uid2 = '.$_SESSION['uid'].' LIMIT 1');
@@ -481,13 +481,13 @@ if (isset($_SESSION['uid']))
 	if (!isset($_SESSION['vraiuid']))
 	{
 		if (mysql_result(mysql_query('SELECT COUNT(1) FROM autorise WHERE uid2 = '.$_SESSION['uid'].' and uid1 = '.$_GET['uid']),0))
-			echo '<a onmouseover="montre(\'Gérer son compte\');" onmouseout="cache();" href="switchto.php?uid='.$_GET['uid'].'"><img src=icones/gere.png border=0></a>';
+			echo '<a onmouseover="montre(\'Gï¿½rer son compte\');" onmouseout="cache();" href="switchto.php?uid='.$_GET['uid'].'"><img src=icones/gere.png border=0></a>';
 		if (mysql_result(mysql_query('SELECT COUNT(1) FROM autorise WHERE uid1 = '.$_SESSION['uid'].' and uid2 = '.$_GET['uid']),0))
 		{
-			echo '<a onclick="return confirm(\'Etes vous sûr de vouloir interdire ce joueur de gérer votre compte?\')" onmouseover="montre(\'Interdire ce joueur de gérer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=desautorise"><img src=icones/desautorise.png border=0></a>';
+			echo '<a onclick="return confirm(\'Etes vous sï¿½r de vouloir interdire ce joueur de gï¿½rer votre compte?\')" onmouseover="montre(\'Interdire ce joueur de gï¿½rer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=desautorise"><img src=icones/desautorise.png border=0></a>';
 		}
 		else if ($is_ami)
-			echo '<a onclick="return confirm(\'Etes vous sûr de vouloir autoriser ce joueur à gérer votre compte?\')" onmouseover="montre(\'Autoriser à gérer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=autorise&nom='.$joueur[0].'"><img src=icones/autorise.png border=0></a>';
+			echo '<a onclick="return confirm(\'Etes vous sï¿½r de vouloir autoriser ce joueur ï¿½ gï¿½rer votre compte?\')" onmouseover="montre(\'Autoriser ï¿½ gï¿½rer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=autorise&nom='.$joueur[0].'"><img src=icones/autorise.png border=0></a>';
 		
 		if ($is_ami)
 		{
@@ -511,34 +511,34 @@ if (isset($_SESSION['uid']))
 		}
 		else if (!mysql_result(mysql_query('SELECT COUNT(1) FROM bloquage WHERE uid1 = '.$_SESSION['uid'].' and uid2 = '.$_GET['uid']),0))
 		{
-			echo '<a onmouseover="montre(\'Ajouter à mes favoris\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=favoris&nom='.$joueur[0].'"><img src=icones/favoris.png border=0></a>';
+			echo '<a onmouseover="montre(\'Ajouter ï¿½ mes favoris\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=favoris&nom='.$joueur[0].'"><img src=icones/favoris.png border=0></a>';
 			if (!$joueur['admin'])
 				echo '<a onmouseover="montre(\'Bloquer\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=bloque"><img src=icones/bloque.png border=0></a>';
 		}
 		else if (mysql_result(mysql_query('SELECT COUNT(1) FROM bloquage WHERE niveau = 1 AND uid1 = '.$_SESSION['uid'].' and uid2 = '.$_GET['uid']),0))
 		{
-			echo '<a onmouseover="montre(\'Débloquer\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=debloque"><img src=icones/debloque.png border=0></a>';
+			echo '<a onmouseover="montre(\'Dï¿½bloquer\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=debloque"><img src=icones/debloque.png border=0></a>';
 			echo '<a onmouseover="montre(\'Bloquer tout\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=bloquetout"><img src=icones/bloquetout.png border=0></a>';
 		}
 		else
 		{
-			echo '<a onmouseover="montre(\'Débloquer sauf message\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=debloquetout"><img src=icones/debloquetout.png border=0></a>';
+			echo '<a onmouseover="montre(\'Dï¿½bloquer sauf message\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=debloquetout"><img src=icones/debloquetout.png border=0></a>';
 		}
 		
 		
 		/*
 		echo '<a onmouseover="montre(\'Retirer mes amis\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=suppami"><img src=pamis.png border=0></a>';
 		if (!mysql_result(mysql_query('SELECT 1 FROM autorise WHERE uid1 = '.$_SESSION['uid'].' and uid2 = '.$_GET['uid']),0))
-			echo '<a onclick="return confirm(\'Etes vous sûr de vouloir autoriser ce joueur à gérer votre compte?\')" onmouseover="montre(\'Autoriser à gérer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=autorise&nom='.$joueur[0].'"><img src=autorise.png border=0></a>';
+			echo '<a onclick="return confirm(\'Etes vous sï¿½r de vouloir autoriser ce joueur ï¿½ gï¿½rer votre compte?\')" onmouseover="montre(\'Autoriser ï¿½ gï¿½rer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=autorise&nom='.$joueur[0].'"><img src=autorise.png border=0></a>';
 		else
-			echo '<a onclick="return confirm(\'Etes vous sûr de vouloir interdire ce joueur de gérer votre compte?\')" onmouseover="montre(\'Interdire ce joueur de gérer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=desautorise"><img src=desautorise.png border=0></a>';
+			echo '<a onclick="return confirm(\'Etes vous sï¿½r de vouloir interdire ce joueur de gï¿½rer votre compte?\')" onmouseover="montre(\'Interdire ce joueur de gï¿½rer mon compte\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=desautorise"><img src=desautorise.png border=0></a>';
 		if (mysql_result(mysql_query('SELECT 1 FROM autorise WHERE uid2 = '.$_SESSION['uid'].' and uid1 = '.$_GET['uid']),0))
-			echo '<a onmouseover="montre(\'Gérer son compte\');" onmouseout="cache();" href="switchto.php?uid='.$_GET['uid'].'"><img src=gere.png border=0></a>';
+			echo '<a onmouseover="montre(\'Gï¿½rer son compte\');" onmouseout="cache();" href="switchto.php?uid='.$_GET['uid'].'"><img src=gere.png border=0></a>';
 		*/
 	}
 	/*if (!isset($_SESSION['vraiuid']) and !mysql_result(mysql_query('SELECT 1 FROM bloquage WHERE uid1 = '.$_SESSION['uid'].' and uid2 = '.$_GET['uid']),0))
 		echo '<a onmouseover="montre(\'Bloquer\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=bloque"><img src=bloque.png border=0></a> <br>';
-	else if (!isset($_SESSION['vraiuid'])) echo '<a onmouseover="montre(\'Débloquer\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=debloque"><img src=debloque.png border=0></a> <br>';
+	else if (!isset($_SESSION['vraiuid'])) echo '<a onmouseover="montre(\'Dï¿½bloquer\');" onmouseout="cache();" href="fiche.php?uid='.$_GET['uid'].'&action=debloque"><img src=debloque.png border=0></a> <br>';
 	*/
 	if (!$bloquage)
 		echo '<a onmouseover="montre(\'Envoyer un message\');" onmouseout="cache();" href="pmessage.php?uid='.$_GET['uid'].'"><img src=icones/message.png border=0></a>';		
@@ -556,29 +556,29 @@ if (isset($_SESSION['uid']))
 	echo '<br>';		
 }
 echo '</div>';
-echo '<span class="combleu">Ancienneté :</span> '.$joueur[2].' jours<br>';
-echo '<span class="combleu">Dernière connexion :</span> ';
+echo '<span class="combleu">Anciennetï¿½ :</span> '.$joueur[2].' jours<br>';
+echo '<span class="combleu">Derniï¿½re connexion :</span> ';
 getday();
 if ($_SESSION['day']-$joueur[1]==0 and $joueur[8] >= date('H\hi',time()-120))
-	echo 'En ligne ( Vu à '.$joueur[8].' )';
+	echo 'En ligne ( Vu ï¿½ '.$joueur[8].' )';
 else if ($_SESSION['day']-$joueur[1]==0)
-	echo 'Aujourd\'hui ( Vu à '.$joueur[8].' )';
+	echo 'Aujourd\'hui ( Vu ï¿½ '.$joueur[8].' )';
 else if ($_SESSION['day']-$joueur[1]==1)
-	echo 'Hier ( Vu à '.$joueur[8].' )';
+	echo 'Hier ( Vu ï¿½ '.$joueur[8].' )';
 else if (!$joueur[1])
 	echo 'Jamais';
 else
 	echo 'Il y a '.($_SESSION['day']-$joueur[1]).' jours';
 echo '<br>';
 if ($joueur[4])
-	echo '<span class="combleu">Métier :</span> '.$nomMetiers[$joueur[4]-1].' ('.$joueur[5].'% - '.$joueur[6].'% - '.$joueur[7].'%)<br>';
+	echo '<span class="combleu">Mï¿½tier :</span> '.$nomMetiers[$joueur[4]-1].' ('.$joueur[5].'% - '.$joueur[6].'% - '.$joueur[7].'%)<br>';
 
 if ($joueur[10] and $joueur[11])
 {
 	echo '<span class="combleu">Anniversaire :</span> ';
 	echo 'le '.$joueur[10].' '.$mois[$joueur[11]-1];
 	if (isset($_SESSION['uid']) and $_SESSION['admin']>=32) echo ' '.$joueur[12];
-	echo ' <a href=fiche.php?uid='.$_GET['uid'].'&alerte=1 onclick="return confirm(\'Ajouter à vos alertes?\');"><img src=icones/cloche.png border=0></a>';
+	echo ' <a href=fiche.php?uid='.$_GET['uid'].'&alerte=1 onclick="return confirm(\'Ajouter ï¿½ vos alertes?\');"><img src=icones/cloche.png border=0></a>';
 }
 echo '<br><span class="combleu">Inscription : </span> le '.$joueur[29].' '.$mois[$joueur[30]-1].' '.$joueur[31];
 echo '<br>';
@@ -609,7 +609,7 @@ if ($joueur[19])
 	else if ($associ[4]==1)
 		echo 'En attente de validation<br>';
 	else if ($associ[4]==2)
-		echo 'Validé'.(genre('association')==2?'e':'').(possedeDroit(DROIT_GESTION_ASSOC)?' <a href=fiche.php?uid='.$_GET['uid'].'&invalide=1 onclick="return confirm(\'Vous allez invalider cette association.\');"><img src=icones/pasvalide.png></a>':'').'<br>';
+		echo 'Validï¿½'.(genre('association')==2?'e':'').(possedeDroit(DROIT_GESTION_ASSOC)?' <a href=fiche.php?uid='.$_GET['uid'].'&invalide=1 onclick="return confirm(\'Vous allez invalider cette association.\');"><img src=icones/pasvalide.png></a>':'').'<br>';
 		
 	if (isset($_SESSION['uid']) and mysql_result(mysql_query('SELECT COUNT(1) FROM association WHERE valide = 0 AND uid = '.$_SESSION['uid'].' AND aid = '.$_GET['uid']),0) and !isset($_SESSION['vraiuid']))
 	{
@@ -620,21 +620,21 @@ if ($joueur[19])
 	
 	if (isset($_SESSION['uid']) and $associ[4]==2 and $_SESSION['anciennete']>=10 and !isset($_SESSION['vraiuid']))
 	{
-		echo '<br><form method=get onsubmit="return confirm(\'Vous allez donner de l\\\'argent de votre réserve personnelle.\');"><input type="hidden" name="uid" value="'.$_GET['uid'].'"><span class="combleu">Faire un don (minimum 500<img src=icones/monnaie.png>) : </span> <input type="text" style="width:50" name="don" value="500"> <input type="submit" value="Donner"></form>';
+		echo '<br><form method=get onsubmit="return confirm(\'Vous allez donner de l\\\'argent de votre rï¿½serve personnelle.\');"><input type="hidden" name="uid" value="'.$_GET['uid'].'"><span class="combleu">Faire un don (minimum 500<img src=icones/monnaie.png>) : </span> <input type="text" style="width:50" name="don" value="500"> <input type="submit" value="Donner"></form>';
 	}
 	if (isset($_SESSION['uid']) and $associ[4]==2 and $_SESSION['monniveau']>=15 and !isset($_SESSION['vraiuid']) and mysql_result(mysql_query('SELECT sponsor FROM reglages_assoc WHERE aid = '.$_GET['uid']),0))
 	{
 		$est_sponsor=mysql_query('SELECT * FROM sponsors WHERE aid = '.$_GET['uid'].' AND uid = '.$_SESSION['uid']);
 		if ($detail=mysql_fetch_row($est_sponsor))
 		{
-			echo '<br><span class="combleu">'.$SPONSORMAJ.' : </span> Votre '.$SPONSORING.' s\'élève à '.$detail[3].'<img src=monnaie.png> par jour d\'activité. Vous êtes '.$SPONSOR.' depuis ';
+			echo '<br><span class="combleu">'.$SPONSORMAJ.' : </span> Votre '.$SPONSORING.' s\'ï¿½lï¿½ve ï¿½ '.$detail[3].'<img src=monnaie.png> par jour d\'activitï¿½. Vous ï¿½tes '.$SPONSOR.' depuis ';
 			if (getday()-$detail[2]==0)
 				echo 'aujourd\'hui';
 			else if (getday()-$detail[2]==1)
 				echo 'hier';
 			else
 			    echo (getday()-$detail[2]).' jours';	
-			echo '. '.(getday()-$detail[2]>=15?'<a class=atype2 href=reglages.php?arrete='.$detail[1].'>Arrêter le '.$SPONSORING.'</a>':'').'<br>';
+			echo '. '.(getday()-$detail[2]>=15?'<a class=atype2 href=reglages.php?arrete='.$detail[1].'>Arrï¿½ter le '.$SPONSORING.'</a>':'').'<br>';
 		}
 		else
 			echo '<br><a class=atype5 href="sponsor.php?aid='.$_GET['uid'].'" style="float:right">Devenir '.$SPONSOR.' '.$DELASSOCIATION.'</a><span class="combleu">'.$SPONSORMAJ.' : </span>';
@@ -646,7 +646,7 @@ if ($joueur[19])
 }
 if ($_SESSION['monniveau']>=6 and $_GET['uid']!=$_SESSION['uid'] and !$joueur['association'] and $joueur['argent']<=0)
 {
-	echo '<form method=get onsubmit="return confirm(\'Vous allez donner de l\\\'argent de votre réserve personnelle.\');"><input type="hidden" name="uid" value="'.$_GET['uid'].'"><span class=combleu>Aider ce joueur</span><br>Vous pouvez effectuer un don à ce joueur : <input type=text name=don value=0 style="width:50px"><img src=icones/monnaie.png> <input type=submit value="Donner"> (Entre 500 <img src=icones/monnaie.png> et '.floor((500-$joueur['argent'])/0.9).'<img src=icones/monnaie.png>)<br><img src=attention.png> <span class=attention>Une taxe de 10% sera prélevée sur le don.</span></form><br>';
+	echo '<form method=get onsubmit="return confirm(\'Vous allez donner de l\\\'argent de votre rï¿½serve personnelle.\');"><input type="hidden" name="uid" value="'.$_GET['uid'].'"><span class=combleu>Aider ce joueur</span><br>Vous pouvez effectuer un don ï¿½ ce joueur : <input type=text name=don value=0 style="width:50px"><img src=icones/monnaie.png> <input type=submit value="Donner"> (Entre 500 <img src=icones/monnaie.png> et '.floor((500-$joueur['argent'])/0.9).'<img src=icones/monnaie.png>)<br><img src=attention.png> <span class=attention>Une taxe de 10% sera prï¿½levï¿½e sur le don.</span></form><br>';
 }
 if (strcmp($joueur[18],"") and !($joueur[22]&16))
 {
@@ -676,7 +676,7 @@ if ($joueur['mascotte'] and $joueur['monniveau']>=3 and accesAutorise('mascotte'
 	}
 }
 
-echo /*<a class="atype5" style="float:right" href="commentaire.php?sid=-'.$_GET['uid'].'">Voir tout</a>*/'<span class="combleu">Les commentaires à '.$joueur[0].' :</span><br>';
+echo /*<a class="atype5" style="float:right" href="commentaire.php?sid=-'.$_GET['uid'].'">Voir tout</a>*/'<span class="combleu">Les commentaires ï¿½ '.$joueur[0].' :</span><br>';
 echo '<div class="historique" '.((isset($_SESSION['fichestyle']) and $_SESSION['fichestyle'])?'style="width:620;height:250;overflow-y:scroll;overflow-x:hidden"':'').'>';
 
 $query = 'SELECT * FROM comms WHERE destid = '.$_GET['uid'].' ORDER BY comid DESC LIMIT 10';
@@ -707,9 +707,9 @@ if (gestionAutorisee() and !($_SESSION['ban']&4) and (!$bloque_comms or $is_ami 
 echo '<br><br>';
 
 
-echo '<span class="combleu">Activité de '.$joueur[0].' sur la place publique et le coin des jeux :</span> <br>';
-echo '<a class="atype5" href="listemessages.php?uid='.$_GET['uid'].'">Voir tous les sujets créés sur la place publique</a><br>';
-echo '<a class="atype5" href="listejdr.php?uid='.$_GET['uid'].'">Voir ses inscriptions aux jeux de rôle</a><br>';
+echo '<span class="combleu">Activitï¿½ de '.$joueur[0].' sur la place publique et le coin des jeux :</span> <br>';
+echo '<a class="atype5" href="listemessages.php?uid='.$_GET['uid'].'">Voir tous les sujets crï¿½ï¿½s sur la place publique</a><br>';
+echo '<a class="atype5" href="listejdr.php?uid='.$_GET['uid'].'">Voir ses inscriptions aux jeux de rï¿½le</a><br>';
 echo '<br>';
 //<table cellspacing=0 cellpadding=0 style="width:610;overflow:hidden"><tr><td>
 if ($joueur[9])
@@ -719,9 +719,9 @@ drawPlateau(3,$joueur[9],0,$joueur[24]);
 }
 
 echo '<a class="atype5" style="float:right" href="tableau.php?uid='.$_GET['uid'].'">Voir</a>';
-echo '<span class="combleu">Le tableau des robes rencontrées par '.$joueur[0].'</span><br><br>';
+echo '<span class="combleu">Le tableau des robes rencontrï¿½es par '.$joueur[0].'</span><br><br>';
 echo '<a class="atype5" style="float:right" href="noteelevage.php?uid='.$_GET['uid'].'">Voir</a>';
-echo '<span class="combleu">La notation de l\'élevage de '.$joueur[0].'</span><br><br>';
+echo '<span class="combleu">La notation de l\'ï¿½levage de '.$joueur[0].'</span><br><br>';
 
 if ($joueur[14])
 {
@@ -738,7 +738,7 @@ if ($joueur[14])
 	{
 		echo '<tr>';
 		echo '<td align=center>';
-		echo '<img style="background-color:'.$obj[6].'" width=40px src="objets/objet'.$obj[4].$obj[5].'.png"></td><td></td><td align=center><a class="atype5" href="modele.php?mid='.$obj[3].'">'.($obj[4]==2?$nomobj[$obj[5]-1].' ':'').$obj[0].'</a></td><td width=10></td><td align=center>'.$obj[7].'</td><td width=10></td><td style="font-size:smaller;font-style:italic">'.$obj[2].((substr(trim($obj[2]),-1)=='.' or !$obj[2])?'':'.').' Modèle de '.linkFiche($joueur[0],$_GET['uid']).'</a></td><td width=10></td><td align=center>';
+		echo '<img style="background-color:'.$obj[6].'" width=40px src="objets/objet'.$obj[4].$obj[5].'.png"></td><td></td><td align=center><a class="atype5" href="modele.php?mid='.$obj[3].'">'.($obj[4]==2?$nomobj[$obj[5]-1].' ':'').$obj[0].'</a></td><td width=10></td><td align=center>'.$obj[7].'</td><td width=10></td><td style="font-size:smaller;font-style:italic">'.$obj[2].((substr(trim($obj[2]),-1)=='.' or !$obj[2])?'':'.').' Modï¿½le de '.linkFiche($joueur[0],$_GET['uid']).'</a></td><td width=10></td><td align=center>';
 	
 		echo '<a class="atype5" href="atelier.php?uid='.$_GET['uid'].'"><img src="icones/atelier.png" width=40 border=0></a>';
 		
@@ -762,6 +762,7 @@ if (mysql_num_rows($result))
 }
 
 // LES VENTES
+
 include "linkanimalconst.php";
 $list_ventes=mysql_query('SELECT '.$LINK_ANIMAL_ATTRIBUTES.', chevaux.repro, chevaux.proprietaire, chevaux.vente, chevaux_comvente.commentaire FROM chevaux LEFT JOIN chevaux_comvente USING(cid) WHERE proprietaire='.$_GET['uid'].' AND ventestatut IN(1,2,3) AND (reserve=0 OR reserve='.$_SESSION['uid'].')'.($_SESSION['assoc']?' AND chevaux.race = '.$_SESSION['raceassoc']:''));
 
@@ -782,7 +783,7 @@ function acheter(cid) {
 			xhr = new XMLHttpRequest(); 
 		else if(window.ActiveXObject) // Internet Explorer 
 			xhr = new ActiveXObject("Microsoft.XMLHTTP"); 
-		else { // XMLHttpRequest non supporté par le navigateur 
+		else { // XMLHttpRequest non supportï¿½ par le navigateur 
 			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
 			return true; 
 		}
@@ -794,15 +795,15 @@ function acheter(cid) {
 				argent=xhr.responseText;
 				if (argent.length)
 				{
-					GetId('achat'+cid).innerHTML='Achat confirmé';
+					GetId('achat'+cid).innerHTML='Achat confirmï¿½';
 					GetId('argent').innerHTML=argent;
 				}
 				else
-					GetId('achat'+cid).innerHTML='Achat refusé';
+					GetId('achat'+cid).innerHTML='Achat refusï¿½';
 				
 			}
 		}
-		
+		// ici
 		xhr.open("GET", "acheter.php?rapide=1&cid="+cid, true); 
 		xhr.send(null);
 
@@ -821,6 +822,7 @@ function acheter(cid) {
 		$reprorest=($reprorest<0?10000:$reprorest);
 		echo '<tr><td>'.($reprorest<10?' ('.$reprorest.') ':'').linkanimal($vente,1).'<div class="infoanimal historique">'.infoanimal($vente).'</div></td><td>'.($vente['commentaire']?'<div class="comvente">'.nl2br(replaceSmiley($vente['commentaire'],2)).'</div>':'').'</td><td align=center>'.($vente['vente']>0?formatNombre($vente['vente']).'<img src=icones/monnaie.png>':'<a class=atype5 href=enchere.php?cid='.$vente['cid'].'>Enchere</a>');
 		if ($_SESSION['argent']>$vente['vente'] and $vente['vente']>0)
+			// ici
 			echo '<div id="achat'.$vente['cid'].'" style="display:block"><a class=atype5 onclick="return confirm(\'Confirmer cet achat?\');" href="acheter.php?cid='.$vente['cid'].'">Achat &amp; voir</a><br><a class=atype4 onclick="return acheter('.$vente['cid'].');" href="#">Achat &amp; continuer</a></div></td></tr>';
 	}
 	echo '</table>';
@@ -829,10 +831,10 @@ endif;
 
 $legendes=mysql_query('SELECT '.$LINK_ANIMAL_ATTRIBUTES.', LEFT(histoire,512) AS histoire,repro FROM chevaux NATURAL JOIN animaux_histoires WHERE proprietaire = '.$_GET['uid'].' AND equipement & 256');
 if (mysql_num_rows($legendes)>0):
-echo '<span class="combleu">Les légendes de '.$joueur[0].' :</span> ';
+echo '<span class="combleu">Les lï¿½gendes de '.$joueur[0].' :</span> ';
 echo '<div class="" '.((isset($_SESSION['fichestyle']) and $_SESSION['fichestyle'])?'style="width:620;max-height:350;overflow-y:scroll;overflow-x:hidden"':'').'>';
 
-echo '<table><tr><td align=center width=230><span class=combleu>'.$ANIMALMAJ.'</span></td><td class=combleu>Légende</td></tr>';
+echo '<table><tr><td align=center width=230><span class=combleu>'.$ANIMALMAJ.'</span></td><td class=combleu>Lï¿½gende</td></tr>';
 while($vente=mysql_fetch_assoc($legendes)){
 	$reprorest=reproRestantes($vente['race'],$vente['repro']);
 	$reprorest=($reprorest<0?10000:$reprorest);
@@ -850,7 +852,7 @@ if ($nbanimaux<100)
 	
 	if (mysql_num_rows($result))
 	{
-	echo '<a class=atype5 style="float:right" href=elevage.php?uid='.$_GET['uid'].'>Voir son élevage</a><span class="combleu">Les '.$ANIMAUX.' de '.$joueur[0].' :</span> ';
+	echo '<a class=atype5 style="float:right" href=elevage.php?uid='.$_GET['uid'].'>Voir son ï¿½levage</a><span class="combleu">Les '.$ANIMAUX.' de '.$joueur[0].' :</span> ';
 	echo '<div class="" '.((isset($_SESSION['fichestyle']) and $_SESSION['fichestyle'])?'style="width:620;height:500;overflow-y:scroll;overflow-x:hidden"':'').'>';
 	echo '<table cellspacing=0 cellpadding=0>'; 
 	getday();
@@ -902,8 +904,7 @@ if ($nbanimaux<100)
 	}
   
 }
-else echo '<span class="combleu">Les '.$ANIMAUX.' de '.$joueur[0].' :</span><br>'.$joueur[0].' possède trop d\'animaux pour les afficher sur sa fiche. Pour y accéder, <a class=atype5 href=elevage.php?uid='.$_GET['uid'].'>cliquer ici</a>.';
-
+else echo '<span class="combleu">Les '.$ANIMAUX.' de '.$joueur[0].' :</span><br>'.$joueur[0].' possï¿½de trop d\'animaux pour les afficher sur sa fiche. Pour y accï¿½der, <a class=atype5 href=elevage.php?uid='.$_GET['uid'].'>cliquer ici</a>.';
 echo finFenetre();
 include "finpage.php";
 ?>
